@@ -1,5 +1,8 @@
 Be³cik Jakub
+
 nr indeksu: 194955
+
+grupa 2
 
 Tezauryzacja
 ===========
