@@ -1,0 +1,34 @@
+body {
+	overflow: hidden;
+}
+
+canvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -250px;
+    margin-top: -250px;
+    background-color: #ffeeaa;
+}
+
+#coordsX {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    width: 50px;
+    padding: 4px 4px 2px 4px;
+    background-color: black;
+    color: white;
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#coordsY {
+    position: absolute;
+    left: 30px;
+    top: 46px;
+    width: 50px;
+    padding: 2px 4px 4px 4px;
+    background-color: black;
+    color: white;
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+}

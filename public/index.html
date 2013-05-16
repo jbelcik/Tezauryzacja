@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+
+	<head>
+		<title>Tezauryzacja</title>
+		<meta charset="utf-8">
+
+		<link rel="stylesheet" href="style/style.css">
+	</head>
+	
+	<body>
+		<canvas id="gameCanvas"></canvas>
+        <label id="coordsX"></label><br /><label id="coordsY"></label>
+
+		<script src="http://localhost:4000/socket.io/socket.io.js"></script>
+        <script src='js/jquery.min.js'></script>
+		<script src="js/requestAnimationFrame.js"></script>
+		<script src="js/Keys.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/tezauryzacja.js"></script>
+
+		<script>
+			init();
+			animate();
+		</script>
+	</body>
+</html>
