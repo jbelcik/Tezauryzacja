@@ -6,9 +6,11 @@ var canvas,
 	socket,
     worldWidth = 1600,
     worldHeight = 1600,
-    imageSquareSize = 64,
-    imageCenter = imageSquareSize / 2,
-    imageLength = 11;
+    imageWidth = 25,
+    imageHeight = 32,
+    imageWidthCenter = Math.floor(imageWidth / 2),
+    imageHeightCenter = Math.floor(imageHeight / 2),
+    imageLength = 12;
 
 var init = function() {
 	canvas = document.getElementById("gameCanvas");
@@ -19,11 +21,12 @@ var init = function() {
 
 	keys = new Keys();
 
-    var startX = Math.round((Math.random() * (1586 - 64)) - 543 + 32),
-        startY = Math.round((Math.random() * (1586 - 64)) - 543 + 32),
+    var startX = Math.round((Math.random() * (1586 - imageWidth)) - 543 + imageWidthCenter),
+        startY = Math.round((Math.random() * (1586 - imageHeight)) - 543 + imageHeightCenter),
         startImage = Math.floor(Math.random() * imageLength + 1);
 
-	localPlayer = new Player(startX, startY, startImage);
+	localPlayer = new Player(startX, startY);
+    localPlayer.setImageSrc(startImage);
 
 	socket = io.connect("http://localhost", {port: 4000, transports: ["websocket"]});
 
@@ -65,7 +68,7 @@ var  onResize = function(e) {
 var onSocketConnected = function() {
 	console.log("Connected to socket server");
 
-	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), image: localPlayer.getImage()});
+	socket.emit("new player", {x: localPlayer.getX(), y: localPlayer.getY(), image: localPlayer.getImageSrc()});
 };
 
 var onSocketDisconnect = function() {
@@ -73,7 +76,7 @@ var onSocketDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-    var newPlayer = new Player(data.x, data.y, data.image);
+    var newPlayer = new Player(data.x, data.y);
     newPlayer.id = data.id;
 
 	console.log("New player connected: " + data.id);
@@ -113,7 +116,7 @@ var animate = function() {
 
 var updateWorld = function() {
 	if (localPlayer.update(keys)) {
-		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY(), image: localPlayer.getImage()});
+		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY(), image: localPlayer.getImageSrc()});
 	};
 };
 

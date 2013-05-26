@@ -22,7 +22,7 @@ var setEventHandlers = function() {
 };
 
 var onSocketConnection = function(client) {
-	util.log("New player has connected: "+client.id);
+	util.log("New player has connected: " + client.id);
 
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
@@ -35,7 +35,7 @@ var onClientDisconnect = function() {
 	util.log("Player has disconnected: " + this.id);
 
 	if (!removePlayer) {
-		util.log("Player not found: "+this.id);
+		util.log("Player not found: " + this.id);
 		return;
 	};
 
@@ -45,14 +45,14 @@ var onClientDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-	var newPlayer = new Player(data.x, data.y, data.image), i, existingPlayer;
+	var newPlayer = new Player(data.x, data.y), i, existingPlayer;
 	newPlayer.id = this.id;
 
-	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), image: newPlayer.getImage()});
+	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), image: newPlayer.getImageSrc()});
 
-	for (i = 0; i < players.length; i++) {
+	for (i = 0; i < players.length; i += 1) {
 		existingPlayer = players[i];
-		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), image: existingPlayer.getImage()});
+		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), image: existingPlayer.getImageSrc()});
 	};
 
 	players.push(newPlayer);
@@ -69,13 +69,13 @@ var onMovePlayer = function(data) {
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
 
-	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY(), image:  movePlayer.getImage()});
+	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY(), image: movePlayer.getImageSrc()});
 };
 
 var playerById = function(id) {
 	var i;
 
-	for (i = 0; i < players.length; i++) {
+	for (i = 0; i < players.length; i += 1) {
 		if (players[i].id == id)
 			return players[i];
 	};

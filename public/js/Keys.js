@@ -33,16 +33,20 @@ var Keys = function(up, left, right, down) {
 			key = parameter.keyCode;
 
 		switch (key) {
-			case 37: // Left
+			case 37:
+            // LEFT
 				that.left = false;
 				break;
-			case 38: // Up
+			case 38:
+			// UP
 				that.up = false;
 				break;
-			case 39: // Right
+			case 39:
+			// RIGHT
 				that.right = false;
 				break;
-			case 40: // Down
+			case 40:
+			// DOWN
 				that.down = false;
 				break;
 		};
