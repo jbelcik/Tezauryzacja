@@ -45,7 +45,7 @@ var onClientDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-	var newPlayer = new Player(data.x, data.y), i, existingPlayer;
+	var newPlayer = new Player(data.x, data.y, data.image), i, existingPlayer;
 	newPlayer.id = this.id;
 
 	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), image: newPlayer.getImageSrc()});
@@ -68,6 +68,7 @@ var onMovePlayer = function(data) {
 
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
+    movePlayer.setImageSrc(data.image);
 
 	this.broadcast.emit("move player", {id: movePlayer.id, x: movePlayer.getX(), y: movePlayer.getY(), image: movePlayer.getImageSrc()});
 };

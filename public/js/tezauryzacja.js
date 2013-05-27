@@ -6,11 +6,11 @@ var canvas,
 	socket,
     worldWidth = 1600,
     worldHeight = 1600,
-    imageWidth = 25,
+    imageWidth = 29,
     imageHeight = 32,
     imageWidthCenter = Math.floor(imageWidth / 2),
     imageHeightCenter = Math.floor(imageHeight / 2),
-    imageLength = 12;
+    imageLength = 2; // 48;
 
 var init = function() {
 	canvas = document.getElementById("gameCanvas");
@@ -23,10 +23,10 @@ var init = function() {
 
     var startX = Math.round((Math.random() * (1586 - imageWidth)) - 543 + imageWidthCenter),
         startY = Math.round((Math.random() * (1586 - imageHeight)) - 543 + imageHeightCenter),
-        startImage = Math.floor(Math.random() * imageLength + 1);
+        startImage = Math.floor(Math.random() * imageLength + 1),
+        startImageSrc = 'img/' + startImage + ';down-2.png';
 
-	localPlayer = new Player(startX, startY);
-    localPlayer.setImageSrc(startImage);
+	localPlayer = new Player(startX, startY, startImageSrc);
 
 	socket = io.connect("http://localhost", {port: 4000, transports: ["websocket"]});
 
@@ -76,7 +76,7 @@ var onSocketDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-    var newPlayer = new Player(data.x, data.y);
+    var newPlayer = new Player(data.x, data.y, data.image);
     newPlayer.id = data.id;
 
 	console.log("New player connected: " + data.id);
@@ -94,6 +94,7 @@ var onMovePlayer = function(data) {
 
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
+    movePlayer.setImageSrc(data.image);
 };
 
 var onRemovePlayer = function(data) {

@@ -1,12 +1,12 @@
-var Player = function(startX, startY) {
+var Player = function(startX, startY, startImageSrc) {
 	var x = startX,
 		y = startY,
+        imageSrc = startImageSrc,
 		moveAmount = 2,
         counterUp = 0,
         counterDown = 0,
         counterLeft = 0,
-        counterRight = 0,
-        imageSrc;
+        counterRight = 0;
 
 	var getX = function() {
 		return x;
@@ -29,8 +29,7 @@ var Player = function(startX, startY) {
     };
 
     var setImageSrc = function(newImageSrc) {
-        imageSrc = 'img/1.down1.png';
-        //imageSrc = 'img/' + newImageSrc + '.down1.png';
+        imageSrc = newImageSrc;
     };
 
 	var update = function(keys) {
@@ -43,77 +42,82 @@ var Player = function(startX, startY) {
             counterUp += 1;
 
             switch (counterUp % 40) {
-                case 30:
-                    imageSrc = 'img/1.up1.png';
-                    break;
                 case 1:
-                    imageSrc = 'img/1.up2.png';
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-1.png';
                     break;
-                case 10:
-                    imageSrc = 'img/1.up3.png';
+                case 11:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
                     break;
-                case 20:
-                    imageSrc = 'img/1.up4.png';
+                case 21:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-3.png';
+                    break;
+                case 31:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
                     break;
             }
 		} else if (keys.down && y < 1010) {
 			y += moveAmount;
             counterDown += 1;
 
+
             switch (counterDown % 40) {
-                case 30:
-                    imageSrc = 'img/1.down1.png';
-                    break;
                 case 1:
-                    imageSrc = 'img/1.down2.png';
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-1.png';
                     break;
-                case 10:
-                    imageSrc = 'img/1.down3.png';
+                case 11:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-2.png';
                     break;
-                case 20:
-                    imageSrc = 'img/1.down4.png';
+                case 21:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-3.png';
+                    break;
+                case 31:
+                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-2.png';
                     break;
             }
 		};
 
         // LEFT KEY PRIORITY
 		if (keys.left && x > -510) {
-			x -= moveAmount;
-            counterLeft += 1;
+            if (keys.up && y || keys.down) {
+                x -= moveAmount / 2;
+            } else {
+                x -= moveAmount;
+                counterLeft += 1;
 
-            if (!(keys.up && y > -510 || keys.down && y < 1010)) {
                 switch (counterLeft % 40) {
                     case 1:
-                        imageSrc = 'img/1.left1.png';
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-1.png';
                         break;
-                    case 10:
-                        imageSrc = 'img/1.left2.png';
+                    case 11:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-2.png';
                         break;
-                    case 20:
-                        imageSrc = 'img/1.left3.png';
+                    case 21:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-3.png';
                         break;
-                    case 30:
-                        imageSrc = 'img/1.left4.png';
+                    case 31:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-2.png';
                         break;
                 }
             }
-		} else if (keys.right && x < 1010) {
-			x += moveAmount;
-            counterRight += 1;
+        } else if (keys.right && x < 1010) {
+            if (keys.up && y || keys.down) {
+                x += moveAmount / 2;
+            } else {
+                x += moveAmount;
+                counterRight += 1;
 
-            if (!(keys.up && y > -510 || keys.down && y < 1010)) {
                 switch (counterRight % 40) {
                     case 1:
-                        imageSrc = 'img/1.right1.png';
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-1.png';
                         break;
-                    case 10:
-                        imageSrc = 'img/1.right2.png';
+                    case 11:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-2.png';
                         break;
-                    case 20:
-                        imageSrc = 'img/1.right3.png';
+                    case 21:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-3.png';
                         break;
-                    case 30:
-                        imageSrc = 'img/1.right4.png';
+                    case 31:
+                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-2.png';
                         break;
                 }
             }
@@ -125,14 +129,14 @@ var Player = function(startX, startY) {
         if (prevX != x || prevY != y) {
             return true
         } else {
-            imageSrc = 'img/1.down1.png';
+            imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf('-')) + '-2.png';
             counterUp = counterDown = counterLeft = counterRight = 0;
             return false;
         }
 	};
 
     var drawLocal = function(ctx) {
-        image = new Image();
+        var image = new Image();
         image.src = imageSrc;
 
         if (!(x > -300)) {
@@ -187,7 +191,7 @@ var Player = function(startX, startY) {
     };
 
 	var draw = function(ctx, xLocal, yLocal) {
-        image = new Image();
+        var image = new Image();
         image.src = imageSrc;
 
         if (!(xLocal > -300)) {
