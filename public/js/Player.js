@@ -145,30 +145,30 @@ var Player = function(startX, startY, startImageSrc) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         } else if (x < 800 && x > -300) {
         // CENTER
             if (!(y > -300)) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
-                ctx.drawImage(image, canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
-                ctx.drawImage(image, canvas.width / 2 - imageWidthCenter, canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
-                ctx.drawImage(image, canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         } else {
         // RIGHT
@@ -176,16 +176,16 @@ var Player = function(startX, startY, startImageSrc) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         }
     };
@@ -198,37 +198,37 @@ var Player = function(startX, startY, startImageSrc) {
             // LEFT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, y - yLocal + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         } else if (xLocal < 800 && xLocal > -300) {
             // CENTER
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageWidthCenter, y - yLocal + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         } else {
             // RIGHT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, y + 300 + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, y - yLocal + canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageWidthCenter, y - 300 - canvas.height / 2 - imageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
             }
         }
 	};

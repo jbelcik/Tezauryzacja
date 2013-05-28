@@ -1,11 +1,48 @@
 var util = require("util"),
 	io = require("socket.io"),
 	Player = require("./public/js/Player").Player,
+    Item = require("./public/js/Item").Item,
+    Npc = require("./public/js/Npc").Npc,
     socket,
-	players;
+	players,
+    items,
+    npc;
 
 var init = function() {
-	players = [];
+    var itemImageWidth = 28,
+        itemImageHeight = 30,
+        itemImageWidthCenter = Math.floor(itemImageWidth / 2),
+        itemImageHeightCenter = Math.floor(itemImageHeight / 2),
+        itemImageLength = 2, // 64;
+        npcImageWidth = 28,
+        npcImageHeight = 30,
+        npcImageWidthCenter = Math.floor(npcImageWidth / 2),
+        npcImageHeightCenter = Math.floor(npcImageHeight / 2),
+        npcImageLength = 1,
+        i, startX, startY, startImage, startImageSrc, newItem;
+
+
+    players = [];
+    items = [];
+    npcs = [];
+
+    for (i = 0; i < 20; i += 1) {
+        startX = Math.round((Math.random() * (1586 - itemImageWidth)) - 543 + itemImageWidthCenter);
+        startY = Math.round((Math.random() * (1586 - itemImageHeight)) - 543 + itemImageHeightCenter);
+        startImage = Math.floor(Math.random() * itemImageLength + 1);
+        startImageSrc = 'img/' + startImage + ';2.png';
+        newItem = new Item(startX, startY, startImageSrc);
+        items.push(newItem);
+    }
+
+    for (i = 0; i < 10; i += 1) {
+        startX = Math.round((Math.random() * (1586 - npcImageWidth)) - 543 + npcImageWidthCenter);
+        startY = Math.round((Math.random() * (1586 - npcImageHeight)) - 543 + npcImageHeightCenter);
+        startImage = Math.floor(Math.random() * npcImageLength + 1);
+        startImageSrc = 'img/NPCtesticon.png';
+        newNpc = new Npc(startX, startY, startImageSrc);
+        npcs.push(newNpc);
+    }
 
 	socket = io.listen(4000);
 
@@ -45,10 +82,20 @@ var onClientDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-	var newPlayer = new Player(data.x, data.y, data.image), i, existingPlayer;
+	var newPlayer = new Player(data.x, data.y, data.image), i, existingPlayer, existingItem, existingNpc;
 	newPlayer.id = this.id;
 
 	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), image: newPlayer.getImageSrc()});
+
+    for (i = 0; i < npcs.length; i += 1) {
+        existingNpc = npcs[i];
+        this.emit("new npc", {id: i, x: existingNpc.getX(), y: existingNpc.getY(), image: existingNpc.getImageSrc()});
+    };
+
+    for (i = 0; i < items.length; i += 1) {
+        existingItem = items[i];
+        this.emit("new item", {id: i, x: existingItem.getX(), y: existingItem.getY(), image: existingItem.getImageSrc()});
+    };
 
 	for (i = 0; i < players.length; i += 1) {
 		existingPlayer = players[i];
