@@ -129,13 +129,13 @@ var onRemovePlayer = function(data) {
 };
 
 var animate = function() {
-	updateWorld();
+	updateLocalPlayer();
 	drawWorld();
 
 	window.requestAnimFrame(animate);
 };
 
-var updateWorld = function() {
+var updateLocalPlayer = function() {
 	if (localPlayer.update(keys)) {
 		socket.emit("move player", {x: localPlayer.getX(), y: localPlayer.getY(), image: localPlayer.getImageSrc()});
 	};
@@ -169,3 +169,12 @@ var playerById = function(id) {
 	
 	return false;
 };
+
+var collide = function(object1position, object1size, object2position, object2size) {
+    var b1 = object1position - Math.floor(object1size / 2),
+        e1 = object1position + Math.ceil(object1size / 2),
+        b2 = object2position - Math.floor(object2size / 2),
+        e2 = object2position + Math.ceil(object2size / 2);
+
+    return (b1 <= e2 && b1 > b2) || (e1 >= b2 && e1 < e2);
+}

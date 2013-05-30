@@ -6,7 +6,8 @@ var Player = function(startX, startY, startImageSrc) {
         counterUp = 0,
         counterDown = 0,
         counterLeft = 0,
-        counterRight = 0;
+        counterRight = 0,
+        id;
 
 	var getX = function() {
 		return x;
@@ -32,12 +33,36 @@ var Player = function(startX, startY, startImageSrc) {
         imageSrc = newImageSrc;
     };
 
+    var usedHeight = function(y) {
+        var guard = true;
+
+        for (i = 0; i < remotePlayers.length; i += 1) {
+            if (collide(y, characterImageHeight, remotePlayers[i].getY(), characterImageHeight)) {
+                guard = false;
+            }
+        }
+
+        return guard;
+    };
+
+    var usedWidth = function(x) {
+        var guard = true;
+
+        for (i = 0; i < remotePlayers.length; i += 1) {
+            if (collide(x, characterImageWidth, remotePlayers[i].getX(), characterImageWidth)) {
+                guard = false;
+            }
+        }
+
+        return guard;
+    };
+
 	var update = function(keys) {
 		var prevX = x,
 			prevY = y;
 
 		// UP KEY PRIORITY
-		if (keys.up && y > -510) {
+		if (keys.up && y > -510 && usedHeight(y)) {
 			y -= moveAmount;
             counterUp += 1;
 
@@ -55,7 +80,7 @@ var Player = function(startX, startY, startImageSrc) {
                     imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
                     break;
             }
-		} else if (keys.down && y < 1010) {
+		} else if (keys.down && y < 1010 && usedHeight(y)) {
 			y += moveAmount;
             counterDown += 1;
 
@@ -77,7 +102,7 @@ var Player = function(startX, startY, startImageSrc) {
 		};
 
         // LEFT KEY PRIORITY
-		if (keys.left && x > -510) {
+		if (keys.left && x > -510 && usedWidth(x)) {
             if (keys.up && y || keys.down) {
                 x -= moveAmount / 2;
             } else {
@@ -99,7 +124,7 @@ var Player = function(startX, startY, startImageSrc) {
                         break;
                 }
             }
-        } else if (keys.right && x < 1010) {
+        } else if (keys.right && x < 1010 && usedWidth(x)) {
             if (keys.up && y || keys.down) {
                 x += moveAmount / 2;
             } else {
@@ -242,7 +267,8 @@ var Player = function(startX, startY, startImageSrc) {
         setImageSrc: setImageSrc,
 		update: update,
         drawLocal: drawLocal,
-		draw: draw
+		draw: draw,
+        id: id
 	}
 };
 
