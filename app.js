@@ -6,42 +6,72 @@ var util = require("util"),
     socket,
 	players,
     items,
-    npc;
+    itemsAmount = 20,
+    npcs,
+    npcsAmount = 10,
+    imageSize = 32,
+    imageCenter = imageSize / 2,
+	itemImageLength = 2, // 64;
+	npcImageLength = 1; // 48;
 
 var init = function() {
-    var itemImageWidth = 28,
-        itemImageHeight = 30,
-        itemImageWidthCenter = Math.floor(itemImageWidth / 2),
-        itemImageHeightCenter = Math.floor(itemImageHeight / 2),
-        itemImageLength = 2, // 64;
-        npcImageWidth = 28,
-        npcImageHeight = 30,
-        npcImageWidthCenter = Math.floor(npcImageWidth / 2),
-        npcImageHeightCenter = Math.floor(npcImageHeight / 2),
-        npcImageLength = 1,
-        i, startX, startY, startImage, startImageSrc, newItem;
-
-
-    players = [];
+    var i, j, startX, startY, startImage, startImageSrc, newItem, newNpc, guard;
+	
+	players = [];
     items = [];
     npcs = [];
 
-    for (i = 0; i < 20; i += 1) {
-        startX = Math.round((Math.random() * (1586 - itemImageWidth)) - 543 + itemImageWidthCenter);
-        startY = Math.round((Math.random() * (1586 - itemImageHeight)) - 543 + itemImageHeightCenter);
+    for (i = 0; i < itemsAmount; i += 1) {
+        guard = false;
+
+        startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
         startImage = Math.floor(Math.random() * itemImageLength + 1);
         startImageSrc = 'img/' + startImage + ';2.png';
         newItem = new Item(startX, startY, startImageSrc);
-        items.push(newItem);
+
+        for (j = 0; j < items.length && guard == false; j += 1) {
+            if (collision(newItem.getX(), newItem.getY(), items[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        if (guard == false) {
+            items.push(newItem);
+        } else {
+            i -= 1;
+        }
     }
 
-    for (i = 0; i < 10; i += 1) {
-        startX = Math.round((Math.random() * (1586 - npcImageWidth)) - 543 + npcImageWidthCenter);
-        startY = Math.round((Math.random() * (1586 - npcImageHeight)) - 543 + npcImageHeightCenter);
+    for (i = 0; i < npcsAmount; i += 1) {
+        guard = false;
+
+        startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
         startImage = Math.floor(Math.random() * npcImageLength + 1);
-        startImageSrc = 'img/NPCtesticon.png';
+        startImageSrc = 'img/NPCtesticon.png',
         newNpc = new Npc(startX, startY, startImageSrc);
-        npcs.push(newNpc);
+
+        for (j = 0; j < npcs.length && guard == false; j += 1) {
+            if (collision(newNpc.getX(), newNpc.getY(), npcs[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        for (j = 0; j < items.length && guard == false; j += 1) {
+            if (collision(newNpc.getX(), newNpc.getY(), items[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        if (guard == false) {
+            npcs.push(newNpc);
+        } else {
+            i -= 1;
+        }
     }
 
 	socket = io.listen(4000);
@@ -64,6 +94,8 @@ var onSocketConnection = function(client) {
 	client.on("disconnect", onClientDisconnect);
 	client.on("new player", onNewPlayer);
 	client.on("move player", onMovePlayer);
+    client.on("collect item", onCollectItem);
+    client.on("generate item", onGenerateItem);
 };
 
 var onClientDisconnect = function() {
@@ -74,7 +106,7 @@ var onClientDisconnect = function() {
 	if (!removePlayer) {
 		util.log("Player not found: " + this.id);
 		return;
-	};
+	}
 
 	players.splice(players.indexOf(removePlayer), 1);
 
@@ -82,27 +114,121 @@ var onClientDisconnect = function() {
 };
 
 var onNewPlayer = function(data) {
-	var newPlayer = new Player(data.x, data.y, data.image), i, existingPlayer, existingItem, existingNpc;
+	var newPlayer = new Player(data.x, data.y, data.image, data.inventory, data.points), i, existingPlayer, existingItem, existingNpc;
 	newPlayer.id = this.id;
 
-	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), image: newPlayer.getImageSrc()});
+	this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(),
+                                       y: newPlayer.getY(), image: newPlayer.getImageSrc(),
+                                       inventory: newPlayer.getInventory(),
+                                       points: newPlayer.getPoints()});
 
     for (i = 0; i < npcs.length; i += 1) {
         existingNpc = npcs[i];
-        this.emit("new npc", {id: i, x: existingNpc.getX(), y: existingNpc.getY(), image: existingNpc.getImageSrc()});
-    };
+        this.emit("new npc", {x: existingNpc.getX(), y: existingNpc.getY(), image: existingNpc.getImageSrc()});
+    }
 
     for (i = 0; i < items.length; i += 1) {
         existingItem = items[i];
-        this.emit("new item", {id: i, x: existingItem.getX(), y: existingItem.getY(), image: existingItem.getImageSrc()});
-    };
+        this.emit("new item", {x: existingItem.getX(), y: existingItem.getY(), image: existingItem.getImageSrc()});
+    }
 
 	for (i = 0; i < players.length; i += 1) {
 		existingPlayer = players[i];
-		this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(), y: existingPlayer.getY(), image: existingPlayer.getImageSrc()});
-	};
+        this.emit("new player", {id: existingPlayer.id, x: existingPlayer.getX(),
+                                 y: existingPlayer.getY(), image: existingPlayer.getImageSrc(),
+                                 inventory: existingPlayer.getInventory(),
+                                 points: existingPlayer.getPoints()});
+	}
 
-	players.push(newPlayer);
+	/*while (guard == true) {
+        guard = false;
+
+        startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startImage = Math.floor(Math.random() * characterImageLength + 1);
+        startImageSrc = 'img/' + startImage + ';down-2.png';
+        startInventory = [];
+        localPlayer = new Player(startX, startY, startImageSrc, startInventory);
+        console.log("remotePlayers.length = " + remotePlayers.length);
+        for (i = 0; i < remotePlayers.length && guard == false; i += 1) {
+            console.log("(i \< remotePlayers.length && guard == false) = " + (0 < remotePlayers.length && guard == false));
+            if (collision(localPlayer.getX(), localPlayer.getY(), remotePlayers[j])) {
+                guard = true;
+                break;
+            }
+        }
+        console.log("remoteNpcs.length = " + remoteNpcs.length);
+        for (i = 0; i < remoteNpcs.length && guard == false; i += 1) {
+            console.log("(i \< remoteNpcs.length && guard == false) = " + (i < remoteNpcs.length && guard == false));
+            if (collision(localPlayer.getX(), localPlayer.getY(), remoteNpcs[j])) {
+                guard = true;
+                break;
+            }
+        }
+        console.log("remoteItems.length = " + remoteItems.length);
+        for (i = 0; i < remoteItems.length && guard == false; i += 1) {
+            console.log("(i \< remoteItems.length && guard == false) = " + (i < remoteItems.length && guard == false));
+            if (collision(localPlayer.getX(), localPlayer.getY(), remoteItems[j])) {
+                guard = true;
+                break;
+            }
+        }
+        console.log("guard = " + guard);
+        if (guard == false) {
+            */players.push(newPlayer);
+        /*} else {
+            guard = true;
+        }
+    }
+    console.log("poza whilem");
+*/};
+
+var onCollectItem = function(data) {
+    items.splice(data.id, 1);
+
+    this.broadcast.emit("item collected", {id: data.id});
+};
+
+var onGenerateItem = function() {
+    for (i = items.length; i < itemsAmount; i += 1) {
+        guard = false;
+
+        startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter);
+        startImage = Math.floor(Math.random() * itemImageLength + 1);
+        startImageSrc = 'img/' + startImage + ';2.png';
+        newItem = new Item(startX, startY, startImageSrc);
+
+        for (j = 0; j < items.length && guard == false; j += 1) {
+            if (collision(newItem.getX(), newItem.getY(), items[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        for (j = 0; j < npcs.length && guard == false; j += 1) {
+            if (collision(newItem.getX(), newItem.getY(), npcs[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        for (j = 0; j < players.length && guard == false; j += 1) {
+            if (collision(newItem.getX(), newItem.getY(), players[j])) {
+                guard = true;
+                break;
+            }
+        }
+
+        if (guard == false) {
+            items.push(newItem);
+        } else {
+            i -= 1;
+        }
+    }
+
+    this.emit("new item", {x: newItem.getX(), y: newItem.getY(), image: newItem.getImageSrc()});
+    this.broadcast.emit("new item", {x: newItem.getX(), y: newItem.getY(), image: newItem.getImageSrc()});
 };
 
 var onMovePlayer = function(data) {
@@ -111,7 +237,7 @@ var onMovePlayer = function(data) {
 	if (!movePlayer) {
 		util.log("Player not found: " + this.id);
 		return;
-	};
+	}
 
 	movePlayer.setX(data.x);
 	movePlayer.setY(data.y);
@@ -126,9 +252,16 @@ var playerById = function(id) {
 	for (i = 0; i < players.length; i += 1) {
 		if (players[i].id == id)
 			return players[i];
-	};
+	}
 
 	return false;
+};
+
+var collision = function(objectOneX, objectOneY, objectTwo) {
+    return objectOneX < objectTwo.getX() + imageSize &&
+           objectOneX + imageSize > objectTwo.getX() &&
+           objectOneY < objectTwo.getY() + imageSize &&
+           objectOneY + imageSize > objectTwo.getY();
 };
 
 init();

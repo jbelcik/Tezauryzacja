@@ -1,8 +1,7 @@
 var Npc = function(startX, startY, startImageSrc) {
     var x = startX,
         y = startY,
-        imageSrc = startImageSrc,
-        id;
+        imageSrc = startImageSrc;
 
     var getX = function() {
         return x;
@@ -28,7 +27,25 @@ var Npc = function(startX, startY, startImageSrc) {
         imageSrc = newImageSrc;
     };
 
-    var draw = function(ctx, xLocal, yLocal) {
+    var getQuest = function() {
+        //return quest;
+        return 'Bring me this item and I\'ll gave you 10 points';
+    };
+
+    var setQuest = function(newQuest) {
+        //quest = newQuest;
+    };
+
+    var getLookUpItem = function() {
+        //return lookUpItem;
+        return 'img/NPCtesticon.png';
+    };
+
+    var setLookUpItem = function(newLookUpItem) {
+        //lookUpItem = newLookUpItem;
+    };
+
+    var drawNpc = function(ctx, xLocal, yLocal) {
         var image = new Image();
         image.src = imageSrc;
 
@@ -36,50 +53,53 @@ var Npc = function(startX, startY, startImageSrc) {
             // LEFT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else if (xLocal < 800 && xLocal > -300) {
             // CENTER
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else {
             // RIGHT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         }
     }
 
     return {
         getX: getX,
-        getY: getY,
         setX: setX,
+        getY: getY,
         setY: setY,
         getImageSrc: getImageSrc,
         setImageSrc: setImageSrc,
-        draw: draw,
-        id: id
+        getQuest: getQuest,
+        setQuest: setQuest,
+        getLookUpItem: getLookUpItem,
+        setLookUpItem: setLookUpItem,
+        drawNpc: drawNpc
     }
 };
 

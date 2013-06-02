@@ -1,7 +1,10 @@
-var Player = function(startX, startY, startImageSrc) {
+var Player = function(startX, startY, startImageSrc, startInventory, startPoints) {
 	var x = startX,
 		y = startY,
         imageSrc = startImageSrc,
+        inventory = startInventory,
+        points = startPoints,
+        inventorySize = 6,
 		moveAmount = 2,
         counterUp = 0,
         counterDown = 0,
@@ -33,24 +36,73 @@ var Player = function(startX, startY, startImageSrc) {
         imageSrc = newImageSrc;
     };
 
-    var usedHeight = function(y) {
-        var guard = true;
+    var getInventory = function() {
+        return inventory;
+    };
+
+    var setInventory = function(newInventory) {
+        inventory = newInventory;
+    };
+
+    var getPoints = function() {
+        return points;
+    };
+
+    var setPoints = function(newPoints) {
+        points = newPoints;
+    };
+
+    var usedSpace = function(x, y, direction) {
+        var guard = true, i;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
-            if (collide(y, characterImageHeight, remotePlayers[i].getY(), characterImageHeight)) {
-                guard = false;
+            if (collision(x, y, remotePlayers[i], 'temporary')) {
+                var src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
+
+                $('#player').attr('src', src);
+                $('#nick').html(remotePlayers[i].id.slice(0, 8));
+                $('#trade1').attr('src', 'img/NPCtesticon.png');
+                $('#trade2').attr('src', 'img/NPCtesticon.png');
+                $('#trade3').attr('src', 'img/NPCtesticon.png');
+                $('#trade4').attr('src', 'img/NPCtesticon.png');
+                break;
+            } else {
+                $('#player').attr('src', '');
+                $('#nick').html('other player');
+                $('#trade1').attr('src', '');
+                $('#trade2').attr('src', '');
+                $('#trade3').attr('src', '');
+                $('#trade4').attr('src', '');
             }
         }
 
-        return guard;
-    };
+        for (i = 0; i < remoteNpcs.length; i += 1) {
+            if (collision(x, y, remoteNpcs[i], 'temporary')) {
+                $('#npc').attr('src', remoteNpcs[i].getImageSrc());
+                $('#info').html(remoteNpcs[i].getQuest());
+                $('#lookUpItem').attr('src', remoteNpcs[i].getLookUpItem());
+                break;
+            } else {
+                $('#npc').attr('src', '');
+                $('#info').html('');
+                $('#lookUpItem').attr('src', '');
+            }
+        }
 
-    var usedWidth = function(x) {
-        var guard = true;
+         for (i = 0; i < remoteItems.length; i += 1) {
+            if (collision(x, y, remoteItems[i], 'collectible') && inventory.length < inventorySize) {
+                inventory.push(remoteItems[i]);
 
-        for (i = 0; i < remotePlayers.length; i += 1) {
-            if (collide(x, characterImageWidth, remotePlayers[i].getX(), characterImageWidth)) {
-                guard = false;
+                var inventoryId = '#item' + inventory.length,
+                    src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
+
+                $(inventoryId).attr('src', src);
+
+                socket.emit("collect item", {id: i});
+
+                remoteItems.splice(i, 1);
+
+                socket.emit("generate item");
             }
         }
 
@@ -62,8 +114,13 @@ var Player = function(startX, startY, startImageSrc) {
 			prevY = y;
 
 		// UP KEY PRIORITY
-		if (keys.up && y > -510 && usedHeight(y)) {
-			y -= moveAmount;
+		if (keys.up && y > -510 && usedSpace(x, y, 'up')) {
+            if ((keys.left && x > -510) || (keys.right && x < 1010)) {
+			    y -= moveAmount / 2;
+            } else {
+                y -= moveAmount;
+            }
+
             counterUp += 1;
 
             switch (counterUp % 40) {
@@ -80,10 +137,14 @@ var Player = function(startX, startY, startImageSrc) {
                     imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
                     break;
             }
-		} else if (keys.down && y < 1010 && usedHeight(y)) {
-			y += moveAmount;
-            counterDown += 1;
+		} else if (keys.down && y < 1010 && usedSpace(x, y, 'down')) {
+            if ((keys.left && x > -510) || (keys.right && x < 1010)) {
+                y += moveAmount / 2;
+            } else {
+                y += moveAmount;
+            }
 
+            counterDown += 1;
 
             switch (counterDown % 40) {
                 case 1:
@@ -102,8 +163,8 @@ var Player = function(startX, startY, startImageSrc) {
 		};
 
         // LEFT KEY PRIORITY
-		if (keys.left && x > -510 && usedWidth(x)) {
-            if (keys.up && y || keys.down) {
+		if (keys.left && x > -510 && usedSpace(x, y, 'left')) {
+            if ((keys.up && y > -510) || (keys.down && y < 1010)) {
                 x -= moveAmount / 2;
             } else {
                 x -= moveAmount;
@@ -124,8 +185,8 @@ var Player = function(startX, startY, startImageSrc) {
                         break;
                 }
             }
-        } else if (keys.right && x < 1010 && usedWidth(x)) {
-            if (keys.up && y || keys.down) {
+        } else if (keys.right && x < 1010 && usedSpace(x, y, 'right')) {
+            if ((keys.up && y > -510) || (keys.down && y < 1010)) {
                 x += moveAmount / 2;
             } else {
                 x += moveAmount;
@@ -160,7 +221,7 @@ var Player = function(startX, startY, startImageSrc) {
         }
 	};
 
-    var drawLocal = function(ctx) {
+    var drawLocalPlayer = function(ctx) {
         var image = new Image();
         image.src = imageSrc;
 
@@ -170,30 +231,30 @@ var Player = function(startX, startY, startImageSrc) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, canvas.height / 2 - imageCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
                 ctx.fillRect(0, 0, 1, canvas.height);
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else if (x < 800 && x > -300) {
         // CENTER
             if (!(y > -300)) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
-                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
-                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - imageCenter, canvas.height / 2 - imageCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
-                ctx.drawImage(image, canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else {
         // RIGHT
@@ -201,21 +262,21 @@ var Player = function(startX, startY, startImageSrc) {
             // TOP
                 ctx.fillRect(0, 0, canvas.width, 1);
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (y < 800 && y > -300) {
             // CENTER
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, canvas.height / 2 - imageCenter);
             } else {
             // BOTTOM
                 ctx.fillRect(0, canvas.height - 1, canvas.width, 1);
                 ctx.fillRect(canvas.width - 1, 0, 1, canvas.height);
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         }
     };
 
-	var draw = function(ctx, xLocal, yLocal) {
+	var drawPlayer = function(ctx, xLocal, yLocal) {
         var image = new Image();
         image.src = imageSrc;
 
@@ -223,51 +284,55 @@ var Player = function(startX, startY, startImageSrc) {
             // LEFT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x + 300 + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x + 300 + canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else if (xLocal < 800 && xLocal > -300) {
             // CENTER
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - xLocal + canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - xLocal + canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         } else {
             // RIGHT
             if (!(yLocal > -300)) {
                 // TOP
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y + 300 + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y + 300 + canvas.height / 2 - imageCenter);
             } else if (yLocal < 800 && yLocal > -300) {
                 // CENTER
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - yLocal + canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y - yLocal + canvas.height / 2 - imageCenter);
             } else {
                 // BOTTOM
-                ctx.drawImage(image, x - 300 - canvas.width / 2 - characterImageWidthCenter, y - 300 - canvas.height / 2 - characterImageHeightCenter);
+                ctx.drawImage(image, x - 300 - canvas.width / 2 - imageCenter, y - 300 - canvas.height / 2 - imageCenter);
             }
         }
 	};
 
 	return {
 		getX: getX,
-		getY: getY,
 		setX: setX,
+        getY: getY,
 		setY: setY,
         getImageSrc: getImageSrc,
         setImageSrc: setImageSrc,
+        getInventory: getInventory,
+        setInventory: setInventory,
+        getPoints: getPoints,
+        setPoints: setPoints,
 		update: update,
-        drawLocal: drawLocal,
-		draw: draw,
+        drawLocalPlayer: drawLocalPlayer,
+		drawPlayer: drawPlayer,
         id: id
 	}
 };

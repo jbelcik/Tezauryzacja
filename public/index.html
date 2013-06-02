@@ -11,9 +11,63 @@
 	
 	<body>
 		<canvas id="gameCanvas"></canvas>
-        <label id="coordsX"></label><br /><label id="coordsY"></label>
 
-		<script src="http://localhost:4000/socket.io/socket.io.js"></script>
+        <table id="inventory">
+            <tr>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>6</th>
+            </tr>
+            <tr>
+                <td><img id="item1" src=""></td>
+                <td><img id="item2" src=""></td>
+                <td><img id="item3" src=""></td>
+                <td><img id="item4" src=""></td>
+                <td><img id="item5" src=""></td>
+                <td><img id="item6" src=""></td>
+            </tr>
+        </table>
+
+        <table id="market">
+            <tr><th colspan="2">TRADE</th></tr>
+            <tr><td colspan="2"><img id="player" src=""></td></tr>
+            <tr><th id="nick" colspan="2">other player</th></tr>
+            <tr>
+                <td><img id="trade1" src=""></td>
+                <td><img id="trade2" src=""></td>
+            </tr>
+            <tr>
+                <td><img id="trade3" src=""></td>
+                <td><img id="trade4" src=""></td>
+            </tr>
+            <tr><th id="you" colspan="2">you</th></tr>
+            <tr>
+                <td><img id="trade1local" src=""></td>
+                <td><img id="trade2local" src=""></td>
+            </tr>
+            <tr>
+                <td><img id="trade3local" src=""></td>
+                <td><img id="trade4local" src=""></td>
+            </tr>
+        </table>
+
+        <table id="quest">
+            <tr><th>QUEST</th></tr>
+            <tr><td><img id="npc" src=""></td></tr>
+            <tr><td id="info"></td></tr>
+            <tr><td><img id="lookUpItem" src=""></td></tr>
+        </table>
+
+        <table id="coords">
+            <tr><th>COORDINATES</th></tr>
+            <tr><td id="coordsX"></td></tr>
+            <tr><td id="coordsY"></td></tr>
+        </table>
+
+        <script src="http://localhost:4000/socket.io/socket.io.js"></script>
         <script src='js/jquery.min.js'></script>
 		<script src="js/requestAnimationFrame.js"></script>
 		<script src="js/Keys.js"></script>

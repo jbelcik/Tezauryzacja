@@ -6,29 +6,144 @@ canvas {
     position: absolute;
     left: 50%;
     top: 50%;
-    margin-left: -250px;
-    margin-top: -250px;
+    margin-left: -300px;
+    margin-top: -295px;
     background-color: limegreen;
 }
 
-#coordsX {
+#inventory {
     position: absolute;
-    left: 30px;
-    top: 30px;
-    width: 50px;
-    padding: 4px 4px 2px 4px;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 45px;
+    margin-left: -300px;
+    margin-top: 207px;
+    border: 1px solid black;
     background-color: black;
-    color: white;
+}
+
+#inventory th {
     font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    width: 34.5px;
+    height: 3px;
+    text-align: center;
+}
+
+#inventory td {
+    width: 34.5px;
+    height: 34.5px;
+    border: 1px solid black;
+    text-align: center;
+    background-color: white;
+}
+
+#market {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100px;
+    height: 250px;
+    margin-left: 202px;
+    margin-top: -295px;
+    border: 1px solid black;
+    background-color: black;
+}
+
+#market th {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    width: 34.5px;
+    height: 15px;
+    text-align: center;
+}
+
+#market td {
+    width: 34.5px;
+    height: 34.5px;
+    border: 1px solid black;
+    text-align: center;
+    color: black;
+    background-color: white;
+    line-height: 1px;
+}
+
+#quest {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100px;
+    height: 211px;
+    margin-left: 202px;
+    margin-top: -29.5px;
+    border: 1px solid black;
+    background-color: black;
+}
+
+#quest th {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    width: 34.5px;
+    height: 15px;
+    text-align: center;
+}
+
+#quest td {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 34.5px;
+    height: 34.5px;
+    border: 1px solid black;
+    text-align: center;
+    color: black;
+    background-color: white;
+    line-height: 1px;
+}
+
+#quest td#info {
+    width: 34.5px;
+    height: 101px;
+    text-align: justify;
+    vertical-align:text-top;
+    line-height: normal;
+}
+
+#coords {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 100px;
+    height: 85px;
+    margin-left: 202px;
+    margin-top: 183px;
+    border: 1px solid black;
+    background-color: black;
+}
+
+#coords th {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    color: white;
+    width: 34.5px;
+    height: 15px;
+    text-align: center;
+}
+
+#coordsX {
+    font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 34.5px;
+    height: 25px;
+    border: 1px solid black;
+    text-align: center;
+    color: black;
+    background-color: white;
 }
 
 #coordsY {
-    position: absolute;
-    left: 30px;
-    top: 46px;
-    width: 50px;
-    padding: 2px 4px 4px 4px;
-    background-color: black;
-    color: white;
     font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
+    width: 34.5px;
+    height: 25px;
+    border: 1px solid black;
+    text-align: center;
+    color: black;
+    background-color: white;
 }
