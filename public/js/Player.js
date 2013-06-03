@@ -56,7 +56,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         var guard = true, i, j, k;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
-            if (collision(x, y, remotePlayers[i], 'temporary')) {
+            if (collision(x, y, remotePlayers[i])) {
                 var src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
 
                 $('#player').attr('src', src);
@@ -77,7 +77,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         }
 
         for (i = 0; i < remoteNpcs.length; i += 1) {
-            if (collision(x, y, remoteNpcs[i], 'temporary')) {
+            if (collision(x, y, remoteNpcs[i])) {
                 $('#npc').attr('src', remoteNpcs[i].getImageSrc());
                 $('#lookUpItem').attr('src', remoteNpcs[i].getDesiredItem());
                 $('#reward').html(remoteNpcs[i].getReward());
@@ -97,7 +97,8 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
                             inventory.splice(j, 1);
                             points += remoteNpcs[i].getReward();
-                            socket.emit("update points", {id: id, points: points});
+                            $('#points').html(points);
+                            socket.emit("update points", {points: points});
 
                             remoteNpcs[i].generateQuest();
                             socket.emit("change quest", {id: i, desiredItem: remoteNpcs[i].getDesiredItem(), reward: remoteNpcs[i].getReward()});
@@ -117,14 +118,17 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
             }
         }
 
-         for (i = 0; i < remoteItems.length; i += 1) {
-            if (collision(x, y, remoteItems[i], 'collectible') && inventory.length < inventorySize) {
+        keys.q = false;
+
+        for (i = 0; i < remoteItems.length; i += 1) {
+            if (collision(x, y, remoteItems[i]) && inventory.length < inventorySize) {
                 var inventoryId = '#item' + (inventory.length + 1),
                     src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
 
                 inventory.push(src);
                 $(inventoryId).attr('src', inventory[inventory.length - 1]);
 
+                // TODO update inventory
                 socket.emit("collect item", {id: i});
                 remoteItems.splice(i, 1);
                 socket.emit("generate item");
@@ -243,6 +247,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
             return true
         } else {
             imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf('-')) + '-2.png';
+            socket.emit("stop player", {image: imageSrc});
             counterUp = counterDown = counterLeft = counterRight = 0;
             return false;
         }

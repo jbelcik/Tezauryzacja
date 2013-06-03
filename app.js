@@ -5,6 +5,7 @@ var util = require("util"),
     Npc = require("./public/js/Npc").Npc,
     socket,
 	players,
+    playersPoints,
     items,
     itemsAmount = 20,
     npcs,
@@ -18,6 +19,7 @@ var init = function() {
     var i, j, startX, startY, startImage, startImageSrc, newItem, newNpc, guard;
 	
 	players = [];
+    playersPoints = [];
     items = [];
     npcs = [];
 
@@ -98,7 +100,9 @@ var onSocketConnection = function(client) {
 	client.on("move player", onMovePlayer);
     client.on("collect item", onCollectItem);
     client.on("generate item", onGenerateItem);
+    client.on("update points", onUpdatePoints);
     client.on("change quest", onChangeQuest);
+    client.on("stop player", onStopPlayer);
 };
 
 var onClientDisconnect = function() {
@@ -238,11 +242,47 @@ var onGenerateItem = function() {
     this.broadcast.emit("new item", {x: newItem.getX(), y: newItem.getY(), image: newItem.getImageSrc()});
 };
 
+var onUpdatePoints = function(data) {
+    var updatePlayerPoints = playerById(this.id), i;
+
+    if (!updatePlayerPoints) {
+        util.log("Player not found: " + this.id);
+        return;
+    }
+
+    updatePlayerPoints.setPoints(data.points);
+
+    playersPoints = [];
+    this.broadcast.emit("clear players points");
+
+    for (i = 0; i < players.length; i += 1) {
+        playersPoints.push({player: players[i].id, points: players[i].getPoints()});
+
+        this.broadcast.emit("points updated", {player: players[i].id, points: players[i].getPoints()});
+    }
+
+    playersPoints.sort(comparePlayersPoints);
+    this.broadcast.emit("sort players points");
+};
+
 var onChangeQuest = function(data) {
     npcs[data.id].setDesiredItem(data.desiredItem);
     npcs[data.id].setReward(data.reward);
 
     this.broadcast.emit("quest changed", {id: data.id, desiredItem: npcs[data.id].getDesiredItem(), reward: npcs[data.id].getReward()});
+};
+
+var onStopPlayer = function(data) {
+    var stopPlayer = playerById(this.id);
+
+    if (!stopPlayer) {
+        util.log("Player not found: " + this.id);
+        return;
+    }
+
+    stopPlayer.setImageSrc(data.image);
+
+    this.broadcast.emit("player stopped", {id: stopPlayer.id, image: stopPlayer.getImageSrc()});
 };
 
 var onMovePlayer = function(data) {
@@ -276,6 +316,16 @@ var collision = function(objectOneX, objectOneY, objectTwo) {
            objectOneX + imageSize > objectTwo.getX() &&
            objectOneY < objectTwo.getY() + imageSize &&
            objectOneY + imageSize > objectTwo.getY();
+};
+
+var comparePlayersPoints = function(a,b) {
+    if (a.points < b.points) {
+        return -1;
+    } else if (a.points > b.points) {
+        return 1;
+    } else {
+        return 0;
+    }
 };
 
 init();

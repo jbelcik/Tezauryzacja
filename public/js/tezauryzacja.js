@@ -4,6 +4,7 @@ var socket,
 	keys,
 	localPlayer,
 	remotePlayers,
+    remotePlayersPoints,
     remoteItems,
     remoteNpcs,
     worldWidth = 1600,
@@ -40,21 +41,21 @@ var init = function() {
         localPlayer = new Player(startX, startY, startImageSrc, startInventory, 0);
 
         for (i = 0; i < remotePlayers.length && guard == false; i += 1) {
-            if (collision(localPlayer.getX(), localPlayer.getY(), remotePlayers[j], 'generate')) {
+            if (collision(localPlayer.getX(), localPlayer.getY(), remotePlayers[j])) {
                 guard = true;
                 break;
             }
         }
 
         for (i = 0; i < remoteNpcs.length && guard == false; i += 1) {
-            if (collision(localPlayer.getX(), localPlayer.getY(), remoteNpcs[j], 'generate')) {
+            if (collision(localPlayer.getX(), localPlayer.getY(), remoteNpcs[j])) {
                 guard = true;
                 break;
             }
         }
 
         for (i = 0; i < remoteItems.length && guard == false; i += 1) {
-            if (collision(localPlayer.getX(), localPlayer.getY(), remoteItems[j], 'generate')) {
+            if (collision(localPlayer.getX(), localPlayer.getY(), remoteItems[j])) {
                 guard = true;
                 break;
             }
@@ -66,6 +67,8 @@ var init = function() {
             guard = true;
         }
     }
+
+    $('#points').html(localPlayer.getPoints());
 
 	socket = io.connect("http://localhost", {port: 4000, transports: ["websocket"]});
 
@@ -86,7 +89,11 @@ var setEventHandlers = function() {
     socket.on("new item", onNewItem);
     socket.on("new npc", onNewNpc);
     socket.on("item collected", onItemCollected);
+    socket.on("clear players points", onClearPlayersPoints);
+    socket.on("points updated", onPointsUpdated);
+    socket.on("sort players points", onSortPlayersPoints);
     socket.on("quest changed", onQuestChanged);
+    socket.on("player stopped", onPlayerStopped);
 };
 
 var onKeyDown = function(e) {
@@ -101,7 +108,7 @@ var onKeyUp = function(e) {
 	}
 };
 
-var  onResize = function(e) {
+var onResize = function(e) {
 	canvas.width = 500;
 	canvas.height = 500;
 };
@@ -165,6 +172,23 @@ var onQuestChanged = function(data) {
     remoteNpcs[data.id].setReward(data.reward);
 };
 
+var onClearPlayersPoints = function() {
+    remotePlayersPoints = [];
+};
+
+var onPointsUpdated = function(data) {
+    remotePlayersPoints.push({player: data.id, points: data.points});
+};
+
+var onSortPlayersPoints = function() {
+    remotePlayersPoints.sort(comparePlayersPoints);
+};
+
+var onPlayerStopped = function(data) {
+    var stopPlayer = playerById(data.id);
+    stopPlayer.setImageSrc(data.image);
+};
+
 var onRemovePlayer = function(data) {
 	var removePlayer = playerById(data.id), i;
 
@@ -218,32 +242,20 @@ var playerById = function(id) {
 	return false;
 };
 
-var collision = function(objectOneX, objectOneY, objectTwo, direction) {
-    /*if (direction == 'up') {
-        return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-               objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-               !(objectOneY < objectTwo.getY() + imageSize) &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-               objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
-    } else if (direction == 'down') {
-        return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-               objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-               objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-               !(objectOneY + imageSize > objectTwo.getY());    // Object One is going   DOWN    on   TOP      edge of Object Two
-    } else if (direction == 'left') {
-        return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-               objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-               objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-               objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
-    } else if (direction == 'right') {
-        return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-               !(objectOneX + imageSize > objectTwo.getX()) &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-               objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-               objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
+var collision = function(objectOneX, objectOneY, objectTwo) {
+    return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
+           objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
+           objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
+           objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
+};
+
+var comparePlayersPoints = function(a,b) {
+    if (a.points < b.points) {
+        return -1;
+    } else if (a.points > b.points) {
+        return 1;
     } else {
-        */return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-               objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-               objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-               objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
-    //}
+        return 0;
+    }
 };
 
