@@ -52,8 +52,8 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         points = newPoints;
     };
 
-    var usedSpace = function(x, y, direction) {
-        var guard = true, i;
+    var usedSpace = function(x, y, keys) {
+        var guard = true, i, j, k;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
             if (collision(x, y, remotePlayers[i], 'temporary')) {
@@ -79,29 +79,54 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         for (i = 0; i < remoteNpcs.length; i += 1) {
             if (collision(x, y, remoteNpcs[i], 'temporary')) {
                 $('#npc').attr('src', remoteNpcs[i].getImageSrc());
-                $('#info').html(remoteNpcs[i].getQuest());
-                $('#lookUpItem').attr('src', remoteNpcs[i].getLookUpItem());
+                $('#lookUpItem').attr('src', remoteNpcs[i].getDesiredItem());
+                $('#reward').html(remoteNpcs[i].getReward());
+
+                if (keys.q) {
+                    for (j = 0; j < inventory.length; j += 1) {
+                        if (inventory[j] == remoteNpcs[i].getDesiredItem()) {
+                            var inventoryId;
+
+                            for (k = j; k < inventory.length - 1; k += 1) {
+                                inventoryId = '#item' + (k + 1);
+                                $(inventoryId).attr('src', inventory[k + 1]);
+                            }
+
+                            inventoryId = '#item' + (k + 1);
+                            $(inventoryId).attr('src', '');
+
+                            inventory.splice(j, 1);
+                            points += remoteNpcs[i].getReward();
+                            socket.emit("update points", {id: id, points: points});
+
+                            remoteNpcs[i].generateQuest();
+                            socket.emit("change quest", {id: i, desiredItem: remoteNpcs[i].getDesiredItem(), reward: remoteNpcs[i].getReward()});
+
+                            keys.q = false;
+
+                            break;
+                        }
+                    }
+                }
+
                 break;
             } else {
                 $('#npc').attr('src', '');
-                $('#info').html('');
                 $('#lookUpItem').attr('src', '');
+                $('#reward').html('');
             }
         }
 
          for (i = 0; i < remoteItems.length; i += 1) {
             if (collision(x, y, remoteItems[i], 'collectible') && inventory.length < inventorySize) {
-                inventory.push(remoteItems[i]);
-
-                var inventoryId = '#item' + inventory.length,
+                var inventoryId = '#item' + (inventory.length + 1),
                     src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
 
-                $(inventoryId).attr('src', src);
+                inventory.push(src);
+                $(inventoryId).attr('src', inventory[inventory.length - 1]);
 
                 socket.emit("collect item", {id: i});
-
                 remoteItems.splice(i, 1);
-
                 socket.emit("generate item");
             }
         }
@@ -113,8 +138,10 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 		var prevX = x,
 			prevY = y;
 
+        usedSpace(x, y, keys);
+
 		// UP KEY PRIORITY
-		if (keys.up && y > -510 && usedSpace(x, y, 'up')) {
+		if (keys.up && y > -510) {
             if ((keys.left && x > -510) || (keys.right && x < 1010)) {
 			    y -= moveAmount / 2;
             } else {
@@ -137,7 +164,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                     imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
                     break;
             }
-		} else if (keys.down && y < 1010 && usedSpace(x, y, 'down')) {
+		} else if (keys.down && y < 1010) {
             if ((keys.left && x > -510) || (keys.right && x < 1010)) {
                 y += moveAmount / 2;
             } else {
@@ -163,7 +190,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 		};
 
         // LEFT KEY PRIORITY
-		if (keys.left && x > -510 && usedSpace(x, y, 'left')) {
+		if (keys.left && x > -510) {
             if ((keys.up && y > -510) || (keys.down && y < 1010)) {
                 x -= moveAmount / 2;
             } else {
@@ -185,7 +212,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                         break;
                 }
             }
-        } else if (keys.right && x < 1010 && usedSpace(x, y, 'right')) {
+        } else if (keys.right && x < 1010 && usedSpace(x, y, keys)) {
             if ((keys.up && y > -510) || (keys.down && y < 1010)) {
                 x += moveAmount / 2;
             } else {

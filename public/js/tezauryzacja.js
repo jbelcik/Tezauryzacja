@@ -86,6 +86,7 @@ var setEventHandlers = function() {
     socket.on("new item", onNewItem);
     socket.on("new npc", onNewNpc);
     socket.on("item collected", onItemCollected);
+    socket.on("quest changed", onQuestChanged);
 };
 
 var onKeyDown = function(e) {
@@ -135,6 +136,9 @@ var onNewItem = function(data) {
 
 var onNewNpc = function(data) {
     var newNpc = new Npc(data.x, data.y, data.image);
+    newNpc.setItemList(data.itemList);
+    newNpc.setDesiredItem(data.desiredItem);
+    newNpc.setReward(data.reward);
 
     remoteNpcs.push(newNpc);
 };
@@ -154,6 +158,11 @@ var onMovePlayer = function(data) {
 
 var onItemCollected = function(data) {
     remoteItems.splice(data.id, 1);
+};
+
+var onQuestChanged = function(data) {
+    remoteNpcs[data.id].setDesiredItem(data.desiredItem);
+    remoteNpcs[data.id].setReward(data.reward);
 };
 
 var onRemovePlayer = function(data) {

@@ -10,6 +10,7 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
         five = five || false,
         six = six || false,
         q = q || false,
+        qGuard = false,
         w = w || false,
         e = e || false;
 		
@@ -57,10 +58,6 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
             case 54:
             // 6
                 that.six = true;
-                break;
-            case 81:
-            // Q
-                that.q = true;
                 break;
             case 87:
             // W
@@ -120,7 +117,7 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
                 break;
             case 81:
                 // Q
-                that.q = false;
+                that.q = true;
                 break;
             case 87:
                 // W
@@ -139,6 +136,16 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
 		right: right,
 		down: down,
 		onKeyDown: onKeyDown,
-		onKeyUp: onKeyUp
+		onKeyUp: onKeyUp,
+        one: one,
+        two: two,
+        three: three,
+        four: four,
+        five: five,
+        six: six,
+        q: q,
+        qGuard: qGuard,
+        w: w,
+        e: e
 	};
 };

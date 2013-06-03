@@ -68,6 +68,8 @@ var init = function() {
         }
 
         if (guard == false) {
+            newNpc.setItemList(itemImageLength);
+            newNpc.generateQuest();
             npcs.push(newNpc);
         } else {
             i -= 1;
@@ -96,6 +98,7 @@ var onSocketConnection = function(client) {
 	client.on("move player", onMovePlayer);
     client.on("collect item", onCollectItem);
     client.on("generate item", onGenerateItem);
+    client.on("change quest", onChangeQuest);
 };
 
 var onClientDisconnect = function() {
@@ -124,7 +127,11 @@ var onNewPlayer = function(data) {
 
     for (i = 0; i < npcs.length; i += 1) {
         existingNpc = npcs[i];
-        this.emit("new npc", {x: existingNpc.getX(), y: existingNpc.getY(), image: existingNpc.getImageSrc()});
+        this.emit("new npc", {x: existingNpc.getX(), y: existingNpc.getY(),
+                              image: existingNpc.getImageSrc(),
+                              itemList: existingNpc.getItemList(),
+                              desiredItem: existingNpc.getDesiredItem(),
+                              reward: existingNpc.getReward()});
     }
 
     for (i = 0; i < items.length; i += 1) {
@@ -229,6 +236,13 @@ var onGenerateItem = function() {
 
     this.emit("new item", {x: newItem.getX(), y: newItem.getY(), image: newItem.getImageSrc()});
     this.broadcast.emit("new item", {x: newItem.getX(), y: newItem.getY(), image: newItem.getImageSrc()});
+};
+
+var onChangeQuest = function(data) {
+    npcs[data.id].setDesiredItem(data.desiredItem);
+    npcs[data.id].setReward(data.reward);
+
+    this.broadcast.emit("quest changed", {id: data.id, desiredItem: npcs[data.id].getDesiredItem(), reward: npcs[data.id].getReward()});
 };
 
 var onMovePlayer = function(data) {

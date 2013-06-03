@@ -1,7 +1,10 @@
 var Npc = function(startX, startY, startImageSrc) {
     var x = startX,
         y = startY,
-        imageSrc = startImageSrc;
+        imageSrc = startImageSrc,
+        itemList,
+        desiredItem,
+        reward;
 
     var getX = function() {
         return x;
@@ -27,22 +30,34 @@ var Npc = function(startX, startY, startImageSrc) {
         imageSrc = newImageSrc;
     };
 
-    var getQuest = function() {
-        //return quest;
-        return 'Bring me this item and I\'ll gave you 10 points';
+    var getItemList = function () {
+        return itemList;
     };
 
-    var setQuest = function(newQuest) {
-        //quest = newQuest;
+    var setItemList = function (itemImageLength) {
+        itemList = itemImageLength;
     };
 
-    var getLookUpItem = function() {
-        //return lookUpItem;
-        return 'img/NPCtesticon.png';
+    var getDesiredItem = function() {
+        return desiredItem;
     };
 
-    var setLookUpItem = function(newLookUpItem) {
-        //lookUpItem = newLookUpItem;
+    var setDesiredItem = function(newDesiredItem) {
+        desiredItem = newDesiredItem;
+    };
+
+    var getReward = function() {
+        return reward;
+    };
+
+    var setReward = function(newReward) {
+        reward = newReward;
+    };
+
+    var generateQuest = function() {
+        var image = Math.floor(Math.random() * itemList + 1);
+        desiredItem = 'img/' + image + ';2.png';
+        reward  = Math.floor(Math.random() * 20 + 1);
     };
 
     var drawNpc = function(ctx, xLocal, yLocal) {
@@ -95,10 +110,13 @@ var Npc = function(startX, startY, startImageSrc) {
         setY: setY,
         getImageSrc: getImageSrc,
         setImageSrc: setImageSrc,
-        getQuest: getQuest,
-        setQuest: setQuest,
-        getLookUpItem: getLookUpItem,
-        setLookUpItem: setLookUpItem,
+        getItemList: getItemList,
+        setItemList: setItemList,
+        getDesiredItem: getDesiredItem,
+        setDesiredItem: setDesiredItem,
+        getReward: getReward,
+        setReward: setReward,
+        generateQuest: generateQuest,
         drawNpc: drawNpc
     }
 };
