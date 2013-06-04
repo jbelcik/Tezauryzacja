@@ -11,8 +11,8 @@
         worldHeight = 1600,
         imageSize = 32,
         imageCenter = imageSize / 2,
-        characterImageLength = 2, // 48;
-        itemImageLength = 2, // 64;
+        characterImageLength = 2, // 48,
+        itemImageLength = 2, // 64,
         npcImageLength = 1; // 48;
 
     var init = function() {
@@ -95,6 +95,8 @@
         socket.on("sort players points", onSortPlayersPoints);
         socket.on("quest changed", onQuestChanged);
         socket.on("player stopped", onPlayerStopped);
+        socket.on("local winner", onLocalWinner);
+        socket.on("winner", onWinner);
     };
 
     var onKeyDown = function(e) {
@@ -126,7 +128,9 @@
     };
 
     var onSocketDisconnect = function() {
+        alert("Server is unavailable");
         console.log("Disconnected from socket server");
+        window.location.href = "http://localhost:4000/"
     };
 
     var onNewPlayer = function(data) {
@@ -199,7 +203,22 @@
 
     var onPlayerStopped = function(data) {
         var stopPlayer = playerById(data.id);
+
+        if (!stopPlayer) {
+            return;
+        }
+
         stopPlayer.setImageSrc(data.image);
+    };
+
+    var onLocalWinner = function() {
+        alert("congratulations! You are the winner!");
+        window.location.href = "http://localhost:4000/"
+    };
+
+    var onWinner = function(data) {
+        alert("You lost! The winner is" + data.winner);
+        window.location.href = "http://localhost:4000/"
     };
 
     var onRemovePlayer = function(data) {
