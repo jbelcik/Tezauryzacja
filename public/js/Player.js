@@ -104,7 +104,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
                             inventory.splice(j, 1);
                             points += remoteNpcs[i].getReward();
-                            $('#points').html(points);
+                            $('#points').html("asdasdasdasdasd" + points);
                             socket.emit("update points", {points: points});
 
                             remoteNpcs[i].generateQuest();
@@ -222,7 +222,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                         break;
                 }
             }
-        } else if (keys.right && x < 1010 && usedSpace(x, y, keys)) {
+        } else if (keys.right && x < 1010) {
             if ((keys.up && y > -510) || (keys.down && y < 1010)) {
                 x += moveAmount / 2;
             } else {
