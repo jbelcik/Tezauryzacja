@@ -53,20 +53,21 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
     };
 
     var usedSpace = function(x, y, keys) {
-        var playerGuard = true, npcGuard = true, j, k;
+        var i, j, k;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
             if (collision(x, y, remotePlayers[i])) {
                 var src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
 
-                if (playerGuard) {
-                    $('<img>').attr('src', src).appendTo('#player');
-                    $('#nick').html(remotePlayers[i].id.slice(0, 8));
-                    $('<img>').attr('src', 'img/NPCtesticon.png').appendTo('#trade1');
-                    $('<img>').attr('src', 'img/NPCtesticon.png').appendTo('#trade2');
-                    $('<img>').attr('src', 'img/NPCtesticon.png').appendTo('#trade3');
-                    $('<img>').attr('src', 'img/NPCtesticon.png').appendTo('#trade4');
-                }
+                $('#player').empty();
+                $('#nick').html('other player');
+                $('#trade1').empty();
+                $('#trade2').empty();
+                $('#trade3').empty();
+                $('#trade4').empty();
+
+                $('<img>').attr('src', src).appendTo('#player');
+                $('#nick').html(remotePlayers[i].id.slice(0, 8));
 
                 break;
             } else {
@@ -76,17 +77,18 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 $('#trade2').empty();
                 $('#trade3').empty();
                 $('#trade4').empty();
-                playerGuard = false;
             }
         }
 
         for (i = 0; i < remoteNpcs.length; i += 1) {
             if (collision(x, y, remoteNpcs[i])) {
-                if (npcGuard) {
-                    $('<img>').attr('src', remoteNpcs[i].getImageSrc()).appendTo('#npc');
-                    $('<img>').attr('src', remoteNpcs[i].getDesiredItem()).appendTo('#lookUpItem');
-                    $('#reward').html(remoteNpcs[i].getReward());
-                }
+                $('#npc').empty();
+                $('#lookUpItem').empty();
+                $('#reward').html("");
+
+                $('<img>').attr('src', remoteNpcs[i].getImageSrc()).appendTo('#npc');
+                $('<img>').attr('src', remoteNpcs[i].getDesiredItem()).appendTo('#lookUpItem');
+                $('#reward').html(remoteNpcs[i].getReward());
 
                 if (keys.q) {
                     for (j = 0; j < inventory.length; j += 1) {
@@ -104,7 +106,6 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
                             inventory.splice(j, 1);
                             points += remoteNpcs[i].getReward();
-                            $('#points').html("asdasdasdasdasd" + points);
                             socket.emit("update points", {points: points});
 
                             remoteNpcs[i].generateQuest();
@@ -122,7 +123,6 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 $('#npc').empty();
                 $('#lookUpItem').empty();
                 $('#reward').html("");
-                npcGuard = false;
             }
         }
 
@@ -136,7 +136,6 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 inventory.push(src);
                 $('<img>').attr('src', inventory[inventory.length - 1]).appendTo((inventoryId));
 
-                // TODO update inventory
                 socket.emit("collect item", {id: i});
                 remoteItems.splice(i, 1);
                 socket.emit("generate item");

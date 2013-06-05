@@ -137,6 +137,10 @@ canvas {
     background-color: white;
 }
 
-#scoreboard {
-    margin-top: 100px;
+#keys {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: 310px;
+    margin-top: 0px;
 }

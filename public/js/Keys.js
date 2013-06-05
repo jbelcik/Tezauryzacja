@@ -1,18 +1,16 @@
-var Keys = function(up, left, right, down, one, two, three, four, five, six, q, w, e) {
-    var up = up || false,
-        left = left || false,
-        right = right || false,
-        down = down || false,
-        one = one || false,
-        two = two || false,
-        three = three || false,
-        four = four || false,
-        five = five || false,
-        six = six || false,
-        q = q || false,
-        qGuard = false,
-        w = w || false,
-        e = e || false;
+var Keys = function(kup, kleft, kright, kdown, kone, ktwo, kthree, kfour, kfive, ksix, kq, kt) {
+    var up = kup || false,
+        left = kleft || false,
+        right = kright || false,
+        down = kdown || false,
+        one = kone || false,
+        two = ktwo || false,
+        three = kthree || false,
+        four = kfour || false,
+        five = kfive || false,
+        six = ksix || false,
+        q = kq || false,
+        t = kt || false;
 
     var onKeyDown = function(parameter) {
         var that = this,
@@ -34,38 +32,6 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
             case 40:
                 // DOWN
                 that.down = true;
-                break;
-            case 49:
-                // 1
-                that.one = true;
-                break;
-            case 50:
-                // 2
-                that.two = true;
-                break;
-            case 51:
-                // 3
-                that.three = true;
-                break;
-            case 52:
-                // 4
-                that.four = true;
-                break;
-            case 53:
-                // 5
-                that.five = true;
-                break;
-            case 54:
-                // 6
-                that.six = true;
-                break;
-            case 87:
-                // W
-                that.w = true;
-                break;
-            case 69:
-                // E
-                that.e = true;
                 break;
         };
     };
@@ -93,39 +59,35 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
                 break;
             case 49:
                 // 1
-                that.one = false;
+                that.one = true;
                 break;
             case 50:
                 // 2
-                that.two = false;
+                that.two = true;
                 break;
             case 51:
                 // 3
-                that.three = false;
+                that.three = true;
                 break;
             case 52:
                 // 4
-                that.four = false;
+                that.four = true;
                 break;
             case 53:
                 // 5
-                that.five = false;
+                that.five = true;
                 break;
             case 54:
                 // 6
-                that.six = false;
+                that.six = true;
                 break;
             case 81:
                 // Q
                 that.q = true;
                 break;
-            case 87:
-                // W
-                that.w = false;
-                break;
-            case 69:
-                // E
-                that.e = false;
+            case 81:
+                // T
+                that.t = true;
                 break;
         };
     };
@@ -144,8 +106,6 @@ var Keys = function(up, left, right, down, one, two, three, four, five, six, q, 
         five: five,
         six: six,
         q: q,
-        qGuard: qGuard,
-        w: w,
-        e: e
+        t: t
     };
 };
