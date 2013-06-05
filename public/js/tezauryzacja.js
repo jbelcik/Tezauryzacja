@@ -128,9 +128,10 @@
     };
 
     var onSocketDisconnect = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         alert("Server is unavailable");
-        console.log("Disconnected from socket server");
         window.location.href = "http://localhost:4000/"
+        console.log("Disconnected from socket server");
     };
 
     var onNewPlayer = function(data) {
@@ -138,7 +139,7 @@
         newPlayer.id = data.id;
 
         console.log("New player connected: " + data.id);
-        socket.emit("update points", {points: newPlayer.getPoints()});
+        socket.emit("update points", {points: data.points});
 
         remotePlayers.push(newPlayer);
     };
@@ -229,7 +230,14 @@
             return;
         }
 
-        remotePlayersPoints.splice(remotePlayersPoints.indexOf(removePlayer.id), 1);
+        for (i = 0; i < remotePlayersPoints.length; i += 1) {
+            if (remotePlayersPoints[i].player === data.id) {
+                remotePlayersPoints.splice(i, 1);
+                onSortPlayersPoints();
+                break;
+            }
+        }
+
         remotePlayers.splice(remotePlayers.indexOf(removePlayer), 1);
     };
 

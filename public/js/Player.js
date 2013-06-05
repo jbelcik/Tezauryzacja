@@ -53,13 +53,13 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
     };
 
     var usedSpace = function(x, y, keys) {
-        var guard = true, playerGuard = false, npcGuardi, j, k;
+        var playerGuard = true, npcGuard = true, j, k;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
             if (collision(x, y, remotePlayers[i])) {
                 var src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
 
-                if ($('#player').html() == '') {
+                if (playerGuard) {
                     $('<img>').attr('src', src).appendTo('#player');
                     $('#nick').html(remotePlayers[i].id.slice(0, 8));
                     $('<img>').attr('src', 'img/NPCtesticon.png').appendTo('#trade1');
@@ -76,12 +76,13 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 $('#trade2').empty();
                 $('#trade3').empty();
                 $('#trade4').empty();
+                playerGuard = false;
             }
         }
 
         for (i = 0; i < remoteNpcs.length; i += 1) {
             if (collision(x, y, remoteNpcs[i])) {
-                if ($('#npc').html() == '') {
+                if (npcGuard) {
                     $('<img>').attr('src', remoteNpcs[i].getImageSrc()).appendTo('#npc');
                     $('<img>').attr('src', remoteNpcs[i].getDesiredItem()).appendTo('#lookUpItem');
                     $('#reward').html(remoteNpcs[i].getReward());
@@ -121,13 +122,13 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 $('#npc').empty();
                 $('#lookUpItem').empty();
                 $('#reward').html("");
+                npcGuard = false;
             }
         }
 
         keys.q = false;
 
         for (i = 0; i < remoteItems.length; i += 1) {
-
             if (collision(x, y, remoteItems[i]) && inventory.length < inventorySize) {
                 var inventoryId = '#item' + (inventory.length + 1),
                     src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
@@ -141,8 +142,6 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 socket.emit("generate item");
             }
         }
-
-        return guard;
     };
 
     var update = function(keys) {
