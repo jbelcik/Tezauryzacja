@@ -69,32 +69,32 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[0]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[0]});
-                    tradeItemId = 0;
+                    onSale = 0;
                 } else if (keys.two) {
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[1]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[1]});
-                    tradeItemId = 1;
+                    onSale = 1;
                 } else if (keys.three) {
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[2]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[2]});
-                    tradeItemId = 2;
+                    onSale = 2;
                 } else if (keys.four) {
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[3]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[3]});
-                    tradeItemId = 3;
+                    onSale = 3;
                 } else if (keys.five) {
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[4]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[4]});
-                    tradeItemId = 4;
+                    onSale = 4;
                 } else if (keys.six) {
                     $('#trade1local').empty();
                     $('<img>').attr('src', inventory[5]).appendTo('#trade1local');
                     socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[5]});
-                    tradeItemId = 5;
+                    onSale = 5;
                 }
 
                 if (keys.t && $('#trade1local').html() != '') {
@@ -103,9 +103,9 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 }
 
                 if (tradeGuard && makeTrade) {
-                    tradeItem = inventory[tradeItemId];
+                    outcomeItem = inventory[onSale];
 
-                    socket.emit("send item", {to: remotePlayers[i].id, item: tradeItem});
+                    socket.emit("send item", {to: remotePlayers[i].id});
                     $('#trade1local').empty();
                     $('#trade1').empty();
 

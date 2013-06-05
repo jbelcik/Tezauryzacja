@@ -13,8 +13,9 @@ var socket,
     you,
     tradeGuard = false,
     makeTrade = false,
-    tradeItemId,
-    tradeItem;
+    onSale,
+    outcomeItem,
+    incomeItem;
 
 var init = function() {
 
@@ -73,6 +74,7 @@ var setEventHandlers = function() {
     socket.on("item inserted", onItemInserted);
     socket.on("trade accepted", onTradeAccepted);
     socket.on("item sent", onItemSent);
+    socket.on("exchange", onExchange);
 };
 
 /*var onCoordsGenerated = function(data) {
@@ -246,6 +248,8 @@ var updateLocalPlayer = function() {
 };
 
 var onItemInserted = function(data) {
+    incomeItem = data.item;
+
     $('#trade1').empty();
     $('<img>').attr('src', data.item).appendTo('#trade1');
 };
@@ -254,17 +258,29 @@ var onTradeAccepted = function() {
     tradeGuard = true;
 };
 
-var onItemSent = function(data) {
+var onItemSent = function() {
     var localInventory = localPlayer.getInventory(), inventoryId;
 
-    inventoryId = '#item' + (tradeItemId + 1);
+    inventoryId = '#item' + (onSale + 1);
     $(inventoryId).empty();
-    $('<img>').attr('src', data.item).appendTo(inventoryId);
+    $('<img>').attr('src', incomeItem).appendTo(inventoryId);
 
-    localInventory[tradeItemId] = data.item;
+    localInventory[onSale] = incomeItem;
 
     localPlayer.setInventory(localInventory);
 };
+
+var onExchange = function() {
+    var localInventory = localPlayer.getInventory(), inventoryId;
+
+    inventoryId = '#item' + (onSale + 1);
+    $(inventoryId).empty();
+    $('<img>').attr('src', incomeItem).appendTo(inventoryId);
+
+    localInventory[onSale] = incomeItem;
+
+    localPlayer.setInventory(localInventory);
+}
 
 var drawWorld = function() {
     var i;
