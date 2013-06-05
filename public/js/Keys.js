@@ -33,7 +33,7 @@ var Keys = function(kup, kleft, kright, kdown, kone, ktwo, kthree, kfour, kfive,
                 // DOWN
                 that.down = true;
                 break;
-        };
+        }
     };
 
     var onKeyUp = function(parameter) {
@@ -85,7 +85,7 @@ var Keys = function(kup, kleft, kright, kdown, kone, ktwo, kthree, kfour, kfive,
                 // Q
                 that.q = true;
                 break;
-            case 81:
+            case 84:
                 // T
                 that.t = true;
                 break;

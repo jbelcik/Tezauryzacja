@@ -53,32 +53,77 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
     };
 
     var usedSpace = function(x, y, keys) {
-        var i, j, k;
+        var i, j, k, src, inventoryId;
 
         for (i = 0; i < remotePlayers.length; i += 1) {
             if (collision(x, y, remotePlayers[i])) {
-                var src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
+                src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
 
                 $('#player').empty();
                 $('#nick').html('other player');
-                $('#trade1').empty();
-                $('#trade2').empty();
-                $('#trade3').empty();
-                $('#trade4').empty();
 
                 $('<img>').attr('src', src).appendTo('#player');
                 $('#nick').html(remotePlayers[i].id.slice(0, 8));
+
+                if (keys.one) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[0]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[0]});
+                    tradeItemId = 0;
+                } else if (keys.two) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[1]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[1]});
+                    tradeItemId = 1;
+                } else if (keys.three) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[2]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[2]});
+                    tradeItemId = 2;
+                } else if (keys.four) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[3]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[3]});
+                    tradeItemId = 3;
+                } else if (keys.five) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[4]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[4]});
+                    tradeItemId = 4;
+                } else if (keys.six) {
+                    $('#trade1local').empty();
+                    $('<img>').attr('src', inventory[5]).appendTo('#trade1local');
+                    socket.emit("insert item", {to: remotePlayers[i].id, item: inventory[5]});
+                    tradeItemId = 5;
+                }
+
+                if (keys.t && $('#trade1local').html() != '') {
+                    socket.emit("accept trade", {to: remotePlayers[i].id});
+                    makeTrade = true;
+                }
+
+                if (tradeGuard && makeTrade) {
+                    tradeItem = inventory[tradeItemId];
+
+                    socket.emit("send item", {to: remotePlayers[i].id, item: tradeItem});
+                    $('#trade1local').empty();
+                    $('#trade1').empty();
+
+                    tradeGuard = makeTrade = false;
+                }
+
+                keys.one = keys.two = keys.three = keys.four = keys.five = keys.six = keys.t = false;
 
                 break;
             } else {
                 $('#player').empty();
                 $('#nick').html('other player');
                 $('#trade1').empty();
-                $('#trade2').empty();
-                $('#trade3').empty();
-                $('#trade4').empty();
+                $('#trade1local').empty();
             }
         }
+
+        keys.one = keys.two = keys.three = keys.four = keys.five = keys.six = keys.t = false;
 
         for (i = 0; i < remoteNpcs.length; i += 1) {
             if (collision(x, y, remoteNpcs[i])) {
@@ -93,8 +138,6 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                 if (keys.q) {
                     for (j = 0; j < inventory.length; j += 1) {
                         if (inventory[j] == remoteNpcs[i].getDesiredItem()) {
-                            var inventoryId;
-
                             for (k = j; k < inventory.length - 1; k += 1) {
                                 inventoryId = '#item' + (k + 1);
                                 $(inventoryId).empty();
@@ -130,11 +173,11 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
         for (i = 0; i < remoteItems.length; i += 1) {
             if (collision(x, y, remoteItems[i]) && inventory.length < inventorySize) {
-                var inventoryId = '#item' + (inventory.length + 1),
-                    src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
+                inventoryId = '#item' + (inventory.length + 1);
+                src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
 
                 inventory.push(src);
-                $('<img>').attr('src', inventory[inventory.length - 1]).appendTo((inventoryId));
+                $('<img>').attr('src', inventory[inventory.length - 1]).appendTo(inventoryId);
 
                 socket.emit("collect item", {id: i});
                 remoteItems.splice(i, 1);
@@ -243,7 +286,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
                         break;
                 }
             }
-        };
+        }
 
         $('#coordsX').html('X :  ' + x);
         $('#coordsY').html('Y :  ' + y);

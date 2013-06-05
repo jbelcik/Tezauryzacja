@@ -7,14 +7,14 @@ var socket,
     remotePlayersPoints,
     remoteItems,
     remoteNpcs,
-    worldWidth = 1600,
-    worldHeight = 1600,
     imageSize = 32,
     imageCenter = imageSize / 2,
     characterImageLength = 2, // 48,
-    itemImageLength = 2, // 64,
-    npcImageLength = 1, // 48,
-    you;
+    you,
+    tradeGuard = false,
+    makeTrade = false,
+    tradeItemId,
+    tradeItem;
 
 var init = function() {
 
@@ -70,6 +70,9 @@ var setEventHandlers = function() {
     socket.on("player stopped", onPlayerStopped);
     socket.on("local winner", onLocalWinner);
     socket.on("winner", onWinner);
+    socket.on("item inserted", onItemInserted);
+    socket.on("trade accepted", onTradeAccepted);
+    socket.on("item sent", onItemSent);
 };
 
 /*var onCoordsGenerated = function(data) {
@@ -90,7 +93,7 @@ var onKeyUp = function(e) {
     }
 };
 
-var onResize = function(e) {
+var onResize = function() {
     canvas.width = 500;
     canvas.height = 500;
 };
@@ -112,7 +115,9 @@ var onSocketConnected = function() {
 
 var onSocketDisconnect = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(!alert("Server is unavailable")) window.location.href = "http://localhost:4000/"
+    if (!alert("Server is unavailable")) {
+        window.location.href = "http://localhost:4000/"
+    }
     console.log("Disconnected from socket server");
 };
 
@@ -180,10 +185,10 @@ var onSortPlayersPoints = function() {
     for (i = 0; i < remotePlayersPoints.length; i += 1) {
         if (remotePlayersPoints[i].player == you) {
             $('<tr  style="font-weight:bold"><td>' + remotePlayersPoints[i].player + '</td>' +
-                '<td>' + remotePlayersPoints[i].points + '</td></tr>').appendTo('#scoreboard');
+              '<td>' + remotePlayersPoints[i].points + '</td></tr>').appendTo('#scoreboard');
         } else {
             $('<tr><td>' + remotePlayersPoints[i].player + '</td>' +
-                '<td>' + remotePlayersPoints[i].points + '</td></tr>').appendTo('#scoreboard');
+              '<td>' + remotePlayersPoints[i].points + '</td></tr>').appendTo('#scoreboard');
         }
     }
 };
@@ -199,7 +204,7 @@ var onPlayerStopped = function(data) {
 };
 
 var onLocalWinner = function() {
-    alert("congratulations! You are the winner!");
+    alert("Congratulations! You are the winner!");
     window.location.href = "http://localhost:4000/"
 };
 
@@ -240,6 +245,27 @@ var updateLocalPlayer = function() {
     }
 };
 
+var onItemInserted = function(data) {
+    $('#trade1').empty();
+    $('<img>').attr('src', data.item).appendTo('#trade1');
+};
+
+var onTradeAccepted = function() {
+    tradeGuard = true;
+};
+
+var onItemSent = function(data) {
+    var localInventory = localPlayer.getInventory(), inventoryId;
+
+    inventoryId = '#item' + (tradeItemId + 1);
+    $(inventoryId).empty();
+    $('<img>').attr('src', data.item).appendTo(inventoryId);
+
+    localInventory[tradeItemId] = data.item;
+
+    localPlayer.setInventory(localInventory);
+};
+
 var drawWorld = function() {
     var i;
 
@@ -271,9 +297,9 @@ var playerById = function(id) {
 
 var collision = function(objectOneX, objectOneY, objectTwo) {
     return objectOneX < objectTwo.getX() + imageSize &&  // Object One is going   LEFT    on   RIGHT    edge of Object Two
-        objectOneX + imageSize > objectTwo.getX() &&  // Object One is going   RIGHT   on   LEFT     edge of Object Two
-        objectOneY < objectTwo.getY() + imageSize &&  // Object One is going   UP      on   BOTTOM   edge of Object Two
-        objectOneY + imageSize > objectTwo.getY();    // Object One is going   DOWN    on   TOP      edge of Object Two
+        objectOneX + imageSize > objectTwo.getX() &&     // Object One is going   RIGHT   on   LEFT     edge of Object Two
+        objectOneY < objectTwo.getY() + imageSize &&     // Object One is going   UP      on   BOTTOM   edge of Object Two
+        objectOneY + imageSize > objectTwo.getY();       // Object One is going   DOWN    on   TOP      edge of Object Two
 };
 
 var comparePlayersPoints = function(a,b) {
