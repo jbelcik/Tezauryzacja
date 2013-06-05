@@ -32,7 +32,7 @@ var init = function() {
     remoteItems = [];
     remoteNpcs = [];
 
-    socket = io.connect(window.location.hostname);
+    socket = io.connect("http://sigma.ug.edu.pl", {port: 16500, transports: ["websocket"]});
 
     var startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
         startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
@@ -118,7 +118,7 @@ var onSocketConnected = function() {
 var onSocketDisconnect = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!alert("Server is unavailable")) {
-        window.location.href = "http://localhost:4000/"
+        window.location.href = "http://sigma.ug.edu.pl:16500/";
     }
     console.log("Disconnected from socket server");
 };
@@ -207,12 +207,12 @@ var onPlayerStopped = function(data) {
 
 var onLocalWinner = function() {
     alert("Congratulations! You are the winner!");
-    window.location.href = "http://localhost:4000/"
+    window.location.href = "http://sigma.ug.edu.pl:16500/";
 };
 
 var onWinner = function(data) {
     alert("You lost! The winner is" + data.winner);
-    window.location.href = "http://localhost:4000/"
+    window.location.href = "http://sigma.ug.edu.pl:16500/";
 };
 
 var onRemovePlayer = function(data) {
