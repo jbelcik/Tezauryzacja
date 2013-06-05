@@ -32,7 +32,7 @@ var init = function() {
     remoteItems = [];
     remoteNpcs = [];
 
-    socket = io.connect("http://localhost", {port: 4000, transports: ["websocket"]});
+    socket = io.connect(window.location.hostname);
 
     var startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
         startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
