@@ -32,12 +32,12 @@ var init = function() {
     remoteItems = [];
     remoteNpcs = [];
 
-    socket = io.connect("http://sigma.ug.edu.pl", {port: 16500, transports: ["websocket"]});
+    socket = io.connect(window.location.host.name);
 
     var startX = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
         startY = Math.round((Math.random() * (1586 - imageSize)) - 543 + imageCenter),
         startImage = Math.floor(Math.random() * characterImageLength + 1),
-        startImageSrc = 'img/' + startImage + ';down-2.png',
+        startImageSrc = 'img/characters/' + startImage + ';/down-2.png',
         startInventory = [];
 
     localPlayer = new Player(startX, startY, startImageSrc, startInventory, 0);
@@ -118,7 +118,7 @@ var onSocketConnected = function() {
 var onSocketDisconnect = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!alert("Server is unavailable")) {
-        window.location.href = "http://sigma.ug.edu.pl:16500/";
+        location.reload();
     }
     console.log("Disconnected from socket server");
 };
@@ -206,13 +206,15 @@ var onPlayerStopped = function(data) {
 };
 
 var onLocalWinner = function() {
-    alert("Congratulations! You are the winner!");
-    window.location.href = "http://sigma.ug.edu.pl:16500/";
+    if (!alert("Congratulations! You are the winner!")) {
+        location.reload();
+    }
 };
 
 var onWinner = function(data) {
-    alert("You lost! The winner is" + data.winner);
-    window.location.href = "http://sigma.ug.edu.pl:16500/";
+    if (!alert("You lost! The winner is " + data.winner)) {
+        location.reload();
+    }
 };
 
 var onRemovePlayer = function(data) {
@@ -224,7 +226,7 @@ var onRemovePlayer = function(data) {
     }
 
     for (i = 0; i < remotePlayersPoints.length; i += 1) {
-        if (remotePlayersPoints[i].player === data.id) {
+        if (remotePlayersPoints[i].player === data.id.slice(0, 8)) {
             remotePlayersPoints.splice(i, 1);
             onSortPlayersPoints();
             break;

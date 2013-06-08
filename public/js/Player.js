@@ -57,7 +57,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
         for (i = 0; i < remotePlayers.length; i += 1) {
             if (collision(x, y, remotePlayers[i])) {
-                src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + ';down-2.png';
+                src = remotePlayers[i].getImageSrc().slice(0, remotePlayers[i].getImageSrc().indexOf(';')) + '/down-2.png';
 
                 $('#player').empty();
                 $('#nick').html('other player');
@@ -129,7 +129,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
             if (collision(x, y, remoteNpcs[i])) {
                 $('#npc').empty();
                 $('#lookUpItem').empty();
-                $('#reward').html("");
+                $('#reward').html('');
 
                 $('<img>').attr('src', remoteNpcs[i].getImageSrc()).appendTo('#npc');
                 $('<img>').attr('src', remoteNpcs[i].getDesiredItem()).appendTo('#lookUpItem');
@@ -165,7 +165,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
             } else {
                 $('#npc').empty();
                 $('#lookUpItem').empty();
-                $('#reward').html("");
+                $('#reward').html('');
             }
         }
 
@@ -174,7 +174,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         for (i = 0; i < remoteItems.length; i += 1) {
             if (collision(x, y, remoteItems[i]) && inventory.length < inventorySize) {
                 inventoryId = '#item' + (inventory.length + 1);
-                src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';2.png';
+                src = remoteItems[i].getImageSrc().slice(0, remoteItems[i].getImageSrc().indexOf(';')) + ';/2.png';
 
                 inventory.push(src);
                 $('<img>').attr('src', inventory[inventory.length - 1]).appendTo(inventoryId);
@@ -204,16 +204,16 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
             switch (counterUp % 40) {
                 case 1:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-1.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/up-1.png';
                     break;
                 case 11:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/up-2.png';
                     break;
                 case 21:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-3.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/up-3.png';
                     break;
                 case 31:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';up-2.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/up-2.png';
                     break;
             }
         } else if (keys.down && y < 1010) {
@@ -227,16 +227,16 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
             switch (counterDown % 40) {
                 case 1:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-1.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/down-1.png';
                     break;
                 case 11:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-2.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/down-2.png';
                     break;
                 case 21:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-3.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/down-3.png';
                     break;
                 case 31:
-                    imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';down-2.png';
+                    imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/down-2.png';
                     break;
             }
         };
@@ -251,16 +251,16 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
                 switch (counterLeft % 40) {
                     case 1:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-1.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/left-1.png';
                         break;
                     case 11:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-2.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/left-2.png';
                         break;
                     case 21:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-3.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/left-3.png';
                         break;
                     case 31:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';left-2.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/left-2.png';
                         break;
                 }
             }
@@ -273,16 +273,16 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
 
                 switch (counterRight % 40) {
                     case 1:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-1.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/right-1.png';
                         break;
                     case 11:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-2.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/right-2.png';
                         break;
                     case 21:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-3.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/right-3.png';
                         break;
                     case 31:
-                        imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf(';')) + ';right-2.png';
+                        imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/right-2.png';
                         break;
                 }
             }
@@ -294,7 +294,7 @@ var Player = function(startX, startY, startImageSrc, startInventory, startPoints
         if (prevX != x || prevY != y) {
             return true
         } else {
-            imageSrc = 'img' + imageSrc.slice(imageSrc.indexOf('/'), imageSrc.indexOf('-')) + '-2.png';
+            imageSrc = imageSrc.slice(0, imageSrc.indexOf('-')) + '-2.png';
             socket.emit("stop player", {image: imageSrc});
             counterUp = counterDown = counterLeft = counterRight = 0;
             return false;

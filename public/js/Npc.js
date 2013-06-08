@@ -56,7 +56,7 @@ var Npc = function(startX, startY, startImageSrc) {
 
     var generateQuest = function() {
         var image = Math.floor(Math.random() * itemList + 1);
-        desiredItem = 'img/' + image + ';2.png';
+        desiredItem = 'img/items/' + image + ';/2.png';
         reward  = Math.floor(Math.random() * 20 + 1);
     };
 

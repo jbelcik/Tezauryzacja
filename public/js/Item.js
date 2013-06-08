@@ -34,16 +34,16 @@ var Item = function(startX, startY, startImageSrc) {
 
         switch (guard % 4) {
             case 0:
-                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';') + 1) + '1' + imageSrc.slice(imageSrc.indexOf('.'), imageSrc.length);
+                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/1.png';
                 break;
             case 1:
-                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';') + 1) + '2' + imageSrc.slice(imageSrc.indexOf('.'), imageSrc.length);
+                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/2.png';
                 break;
             case 2:
-                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';') + 1) + '3' + imageSrc.slice(imageSrc.indexOf('.'), imageSrc.length);
+                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/3.png';
                 break;
             case 3:
-                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';') + 1) + '2' + imageSrc.slice(imageSrc.indexOf('.'), imageSrc.length);
+                imageSrc = imageSrc.slice(0, imageSrc.indexOf(';')) + ';/2.png';
                 break;
         }
 
